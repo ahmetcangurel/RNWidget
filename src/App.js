@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   TextInput,
@@ -7,15 +7,15 @@ import {
   SafeAreaView,
   Text,
   Image,
-  ScrollView,
-  KeyboardAvoidingView,
   Platform,
   ToastAndroid,
+  Alert,
 } from 'react-native';
 import SharedGroupPreferences from 'react-native-shared-group-preferences';
 import AwesomeButton from 'react-native-really-awesome-button';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
+const key = 'widgetKey';
 const group = 'group.streak';
 
 const SharedStorage = NativeModules.SharedStorage;
@@ -23,21 +23,37 @@ const SharedStorage = NativeModules.SharedStorage;
 const App = () => {
   const [text, setText] = useState('');
   const widgetData = {
-    text,
+    text: text + 1,
   };
 
   const handleSubmit = async () => {
+    // try {
+    //   // iOS
+    //   await SharedGroupPreferences.setItem('widgetKey', widgetData, group);
+    // } catch (error) {
+    //   console.log({error});
+    // }
+    // const value = `${text} days`;
+    // // Android
+    // SharedStorage.set(JSON.stringify({text: value}));
+    // ToastAndroid.show('Change value successfully!', ToastAndroid.SHORT);
+    // iOS
     try {
-      // iOS
-      await SharedGroupPreferences.setItem('widgetKey', widgetData, group);
+      await SharedGroupPreferences.setItem(key, widgetData, group);
+      Alert.alert('Success', 'Change value successfully!');
     } catch (error) {
       console.log({error});
+      Alert.alert('Error', 'Something went wrong!');
     }
     const value = `${text} days`;
     // Android
     SharedStorage.set(JSON.stringify({text: value}));
     ToastAndroid.show('Change value successfully!', ToastAndroid.SHORT);
   };
+
+  useEffect(() => {
+    handleSubmit();
+  }, [text]);
 
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
