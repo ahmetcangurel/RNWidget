@@ -25,6 +25,7 @@ struct Provider: IntentTimelineProvider {
   
    func getTimeline(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> Void) {
       let userDefaults = UserDefaults.init(suiteName: "group.streak")
+      print(userDefaults?.value(forKey: "widgetKey") as Any)
       if userDefaults != nil {
         let entryDate = Date()
         if let savedData = userDefaults!.value(forKey: "widgetKey") as? String {
@@ -39,6 +40,7 @@ struct Provider: IntentTimelineProvider {
                 print("Could not parse data")
             }
         } else {
+            print("Data yok!")
             let nextRefresh = Calendar.current.date(byAdding: .minute, value: 5, to: entryDate)!
             let entry = SimpleEntry(date: nextRefresh, configuration: configuration, text: "No data set")
             let timeline = Timeline(entries: [entry], policy: .atEnd)
@@ -72,7 +74,7 @@ struct StreakWidgetEntryView : View {
         }
         .padding(.top, 10.0)
         .frame(maxWidth: .infinity)
-        Text("Way to go!")
+        Text("Kaç gün oldu!")
           .foregroundColor(Color(red: 0.69, green: 0.69, blue: 0.69))
           .font(Font.system(size: 14))
           .frame(maxWidth: .infinity)
